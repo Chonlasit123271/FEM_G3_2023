@@ -6,7 +6,7 @@ E0=22.36*10^9;                         %Young's Modulus
 SigmaMax=20*10^6;                       %Compressive Strength of Concrete             
 %CHANGE THE MESH SIZE HERE
 inputfile    =  ('80nodes_1.msh');
-[Coord,Quads,ELEMCon] = autoread(inputfile);
+[Coord,Quads,ELEMCon,node_id] = autoread(inputfile);
 Plot_Element01(ELEMCon,Coord)
 exportgraphics(gcf, ['Node_and_Connectivity_2.jpg']); % Save the figure as a JPEG image
 %%%%__________Define support__________%%%%
@@ -300,6 +300,35 @@ for nin = 1:NINC
     disp(['      Completed Stress & Strain Computation      ', num2str(toc), ' sec'])
     disp("Finished Loadstep:      " +nin                            )
 end
+
+VTK_CONTAINER.POINTS = Coord
+writematrix(Coord,'VTK_CONTAINER_POINTS.txt')
+[row,column]=size(ELEMCon)
+for i = 1:row
+    for j = 1:column
+        cells(i,j) = ELEMCon(i,j)-1;
+        eight(i,1) = 8 ;
+    end
+end
+VTK_CONTAINER.CELLS = [eight cells]
+writematrix(VTK_CONTAINER.CELLS,'VTK_CONTAINER.CELLS.txt')
+
+for i = 1:NE
+    VTK_CONTAINER.CELLS_TYPES(i,1) = 12;
+    VTK_CONTAINER.Stress_x_direction(i,1) = [ELEMENT(i).Actual_stress_x]
+    VTK_CONTAINER.Stress_y_direction(i,1) = [ELEMENT(i).Actual_stress_y]  
+    VTK_CONTAINER.Stress_z_direction(i,1) = [ELEMENT(i).Actual_stress_z]  
+    VTK_CONTAINER.Stress_xy_direction(i,1) = [ELEMENT(i).Actual_stress_xy]  
+    VTK_CONTAINER.Stress_yz_direction(i,1) = [ELEMENT(i).Actual_stress_yz]  
+    VTK_CONTAINER.Stress_xz_direction(i,1) = [ELEMENT(i).Actual_stress_xz]  
+end
+writematrix(VTK_CONTAINER.Stress_x_direction,'VTK_CONTAINER.Stress_x_direction.txt')
+writematrix(VTK_CONTAINER.Stress_y_direction,'VTK_CONTAINER.Stress_y_direction.txt')
+writematrix(VTK_CONTAINER.Stress_z_direction,'VTK_CONTAINER.Stress_z_direction.txt')
+writematrix(VTK_CONTAINER.Stress_xy_direction,'VTK_CONTAINER.Stress_xy_direction.txt')
+writematrix(VTK_CONTAINER.Stress_yz_direction,'VTK_CONTAINER.Stress_yz_direction.txt')
+writematrix(VTK_CONTAINER.Stress_xz_direction,'VTK_CONTAINER.Stress_xz_direction.txt')
+
 
 disp("------------------POST-Processing------------------")
 %Force Displacement Graph

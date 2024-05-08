@@ -48,3 +48,15 @@ The code uses the following MATLAB functions:
 - The code assumes that the input mesh file follows the specified format.
 - The support and load conditions are defined in the code and can be modified as needed.
 - The code saves the final results in the MATLAB workspace and generated output files.
+
+## Post processing to plot stress distribution plot in ParaView in .vtk file
+## vtk DataFile 
+
+- POINTS: number of node coordinates.
+- CELLS: number of element and the size of the cell list size. 
+- CELL_TYPES: number of element. 
+  (12) for Hexahedron element. 
+- CELL_DATA: number of element.
+- SCALARS: dataName dataType numComp.
+  * note that the numComp variable is optional—by default the number of components is equal to one. 
+- LOOKUP_TABLE: magnitude of stresses.
